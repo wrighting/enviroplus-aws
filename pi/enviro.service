@@ -1,0 +1,8 @@
+[Unit]
+Description=Environment monitoring
+After=network.target
+
+[Service]
+ExecStart=/home/pi/enviroplus-aws/pi/all-in-one.py
+Type=simple
+Restart=on-failure

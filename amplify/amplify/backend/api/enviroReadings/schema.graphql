@@ -1,0 +1,29 @@
+﻿
+type Reading @model 
+    @key(name: "byIdentByTime", fields: ["monitorID", "collection_time"]){
+  collection_time: AWSDateTime!
+  humidity: Float
+  id: ID!
+  monitorID: ID!
+  light: Float
+  nh3: Float
+  oxidised: Float
+  pm1: Float
+  pm10: Float
+  pm25: Float
+  pressure: Float
+  reduced: Float
+  temperature: Float
+  raw_temperature: Float
+  comp_factor: Float
+  volume: Float
+}
+
+type Monitor @model
+  @key(name: "byIdent", fields: ["ident", "id"]) {
+  id: ID!
+  ident: String!
+  comp_factor: Float
+  target_temp: Float
+  readingsByDate: [Reading] @connection(keyName: "byIdentByTime", fields: ["id"])
+}

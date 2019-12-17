@@ -1,0 +1,14 @@
+{
+    "dev": {
+        "awscloudformation": {
+            "AuthRoleName": "amplify-enviro-app-dev-125202-authRole",
+            "UnauthRoleArn": "arn:aws:iam::167801016519:role/amplify-enviro-app-dev-125202-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::167801016519:role/amplify-enviro-app-dev-125202-authRole",
+            "Region": "eu-west-2",
+            "DeploymentBucketName": "amplify-enviro-app-dev-125202-deployment",
+            "UnauthRoleName": "amplify-enviro-app-dev-125202-unauthRole",
+            "StackName": "amplify-enviro-app-dev-125202",
+            "StackId": "arn:aws:cloudformation:eu-west-2:167801016519:stack/amplify-enviro-app-dev-125202/620d9e80-0acb-11ea-9ac8-0aad4e0395e8"
+        }
+    }
+}

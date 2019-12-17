@@ -1,0 +1,148 @@
+# this is an auto generated file. This will be overwritten
+mutation CreateReading($input: CreateReadingInput!) {
+  createReading(input: $input) {
+    collection_time
+    humidity
+    id
+    monitorID
+    light
+    nh3
+    oxidised
+    pm1
+    pm10
+    pm25
+    pressure
+    reduced
+    temperature
+    raw_temperature
+    comp_factor
+    volume
+  }
+}
+mutation UpdateReading($input: UpdateReadingInput!) {
+  updateReading(input: $input) {
+    collection_time
+    humidity
+    id
+    monitorID
+    light
+    nh3
+    oxidised
+    pm1
+    pm10
+    pm25
+    pressure
+    reduced
+    temperature
+    raw_temperature
+    comp_factor
+    volume
+  }
+}
+mutation DeleteReading($input: DeleteReadingInput!) {
+  deleteReading(input: $input) {
+    collection_time
+    humidity
+    id
+    monitorID
+    light
+    nh3
+    oxidised
+    pm1
+    pm10
+    pm25
+    pressure
+    reduced
+    temperature
+    raw_temperature
+    comp_factor
+    volume
+  }
+}
+mutation CreateMonitor($input: CreateMonitorInput!) {
+  createMonitor(input: $input) {
+    id
+    ident
+    comp_factor
+    target_temp
+    readingsByDate {
+      items {
+        collection_time
+        humidity
+        id
+        monitorID
+        light
+        nh3
+        oxidised
+        pm1
+        pm10
+        pm25
+        pressure
+        reduced
+        temperature
+        raw_temperature
+        comp_factor
+        volume
+      }
+      nextToken
+    }
+  }
+}
+mutation UpdateMonitor($input: UpdateMonitorInput!) {
+  updateMonitor(input: $input) {
+    id
+    ident
+    comp_factor
+    target_temp
+    readingsByDate {
+      items {
+        collection_time
+        humidity
+        id
+        monitorID
+        light
+        nh3
+        oxidised
+        pm1
+        pm10
+        pm25
+        pressure
+        reduced
+        temperature
+        raw_temperature
+        comp_factor
+        volume
+      }
+      nextToken
+    }
+  }
+}
+mutation DeleteMonitor($input: DeleteMonitorInput!) {
+  deleteMonitor(input: $input) {
+    id
+    ident
+    comp_factor
+    target_temp
+    readingsByDate {
+      items {
+        collection_time
+        humidity
+        id
+        monitorID
+        light
+        nh3
+        oxidised
+        pm1
+        pm10
+        pm25
+        pressure
+        reduced
+        temperature
+        raw_temperature
+        comp_factor
+        volume
+      }
+      nextToken
+    }
+  }
+}

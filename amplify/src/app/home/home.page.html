@@ -1,0 +1,60 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      Enviro Plus
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-content>
+
+    <ion-list>
+      <ion-list-header></ion-list-header>
+
+      <ion-item>
+        <ion-label>Reading Type</ion-label>
+        <ion-select multiple="false" [(ngModel)]="readingType" (ngModelChange)="refresh()">
+          <ion-select-option *ngFor="let readingType of readingTypes" [value]="readingType.label">{{readingType.label}}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ion-list>
+
+    <ion-item>
+      <ion-label>Start time</ion-label>
+      <ion-datetime displayFormat="D MMM YYYY H:mm" [(ngModel)]="startTime" (ngModelChange)="refresh()"></ion-datetime>
+    </ion-item>
+
+    <ion-list>
+      <ion-list-header></ion-list-header>
+
+      <ion-item>
+        <ion-label>Range</ion-label>
+        <ion-select multiple="false" [(ngModel)]="maxLimit" (ngModelChange)="refresh()">
+          <ion-select-option *ngFor="let range of ranges" [value]="range.value">{{range.label}}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ion-list>
+    
+    <ion-item>
+      <ion-label>Number of readings</ion-label>
+      <ion-range min="1" [max]="maxLimit" pin="true" color="secondary" [(ngModel)]="limit" (ngModelChange)="refresh()">
+      </ion-range>
+    </ion-item>
+
+    <div class="row">
+      <div class="col-md-6">
+        <div class="chart-wrapper">
+          <canvas baseChart [datasets]="lineChartData" [labels]="lineChartLabels" [options]="lineChartOptions"
+            [colors]="lineChartColors" [legend]="lineChartLegend" [chartType]="lineChartType"
+            (chartHover)="chartHovered($event)" (chartClick)="chartClicked($event)"></canvas>
+
+        </div>
+      </div>
+    </div>
+  </ion-content>
+
+</ion-content>

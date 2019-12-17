@@ -1,0 +1,148 @@
+# this is an auto generated file. This will be overwritten
+subscription OnCreateReading {
+  onCreateReading {
+    collection_time
+    humidity
+    id
+    monitorID
+    light
+    nh3
+    oxidised
+    pm1
+    pm10
+    pm25
+    pressure
+    reduced
+    temperature
+    raw_temperature
+    comp_factor
+    volume
+  }
+}
+subscription OnUpdateReading {
+  onUpdateReading {
+    collection_time
+    humidity
+    id
+    monitorID
+    light
+    nh3
+    oxidised
+    pm1
+    pm10
+    pm25
+    pressure
+    reduced
+    temperature
+    raw_temperature
+    comp_factor
+    volume
+  }
+}
+subscription OnDeleteReading {
+  onDeleteReading {
+    collection_time
+    humidity
+    id
+    monitorID
+    light
+    nh3
+    oxidised
+    pm1
+    pm10
+    pm25
+    pressure
+    reduced
+    temperature
+    raw_temperature
+    comp_factor
+    volume
+  }
+}
+subscription OnCreateMonitor {
+  onCreateMonitor {
+    id
+    ident
+    comp_factor
+    target_temp
+    readingsByDate {
+      items {
+        collection_time
+        humidity
+        id
+        monitorID
+        light
+        nh3
+        oxidised
+        pm1
+        pm10
+        pm25
+        pressure
+        reduced
+        temperature
+        raw_temperature
+        comp_factor
+        volume
+      }
+      nextToken
+    }
+  }
+}
+subscription OnUpdateMonitor {
+  onUpdateMonitor {
+    id
+    ident
+    comp_factor
+    target_temp
+    readingsByDate {
+      items {
+        collection_time
+        humidity
+        id
+        monitorID
+        light
+        nh3
+        oxidised
+        pm1
+        pm10
+        pm25
+        pressure
+        reduced
+        temperature
+        raw_temperature
+        comp_factor
+        volume
+      }
+      nextToken
+    }
+  }
+}
+subscription OnDeleteMonitor {
+  onDeleteMonitor {
+    id
+    ident
+    comp_factor
+    target_temp
+    readingsByDate {
+      items {
+        collection_time
+        humidity
+        id
+        monitorID
+        light
+        nh3
+        oxidised
+        pm1
+        pm10
+        pm25
+        pressure
+        reduced
+        temperature
+        raw_temperature
+        comp_factor
+        volume
+      }
+      nextToken
+    }
+  }
+}
