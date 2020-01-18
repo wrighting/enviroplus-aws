@@ -1,6 +1,5 @@
-import json
-import os
 import logging
+import json
 from time import time
 
 import boto3
@@ -10,44 +9,32 @@ from requests.exceptions import ConnectionError
 
 import requests
 
-CONFIG_FILE = 'enviro_config.json'
 
 class EnviroClient():
 
-    def __init__(self):
-        try:
+    def __init__(self, serial_number, config_file, config):
 
-            self.serial_number = self.get_serial_number()
+            self.logger = logging.getLogger(__name__)
 
-            dir_path = os.path.dirname(os.path.realpath(__file__))
-            with open(os.path.join(dir_path,CONFIG_FILE)) as config_file:
-                config = json.load(config_file)
+            self.serial_number = serial_number
+            self.config_file = config_file
 
-                self.comp_factor = config['comp_factor']
-                self.calibrate = False
-                if 'calibrate' in config:
-                    self.calibrate = config['calibrate']
-                    self.target_temp = config['target_temp']
-                    # Allow time to stabilize
-                    self.calibrate_countdown = 70
+            self.comp_factor = config['comp_factor']
+            self.calibrate = False
+            if 'calibrate' in config:
+                self.calibrate = config['calibrate']
+                self.target_temp = config['target_temp']
+                # Allow time to stabilize
+                self.calibrate_countdown = 70
 
-                if 'api_key' in config:
-                    self.api_key = config['api_key']
-                else:
-                    self.api_key = None
-                    self.appsync_api_id = config['appsync_api_id']
-                    self.appsync_api_endpoint = config['appsync_api_endpoint']
-                self.api_expires = 0
-                self.cached_api_key = None
-        except FileNotFoundError as fnfe:
-            print('environ_config.json not found')
-
-    # Get Raspberry Pi serial number to use as ID                                                                                                                                                                                                                                                   
-    def get_serial_number(self):
-        with open('/proc/cpuinfo', 'r') as f:
-            for line in f:
-                if line[0:6] == 'Serial':
-                    return line.split(":")[1].strip()
+            if 'api_key' in config:
+                self.api_key = config['api_key']
+            else:
+                self.api_key = None
+                self.appsync_api_id = config['appsync_api_id']
+                self.appsync_api_endpoint = config['appsync_api_endpoint']
+            self.api_expires = 0
+            self.cached_api_key = None
 
     def get_api_key(self):
 
@@ -60,7 +47,7 @@ class EnviroClient():
             try:
                 response = boto3_client.list_api_keys(apiId=self.appsync_api_id)
             except EndpointConnectionError as epce:
-                logging.error(epce)
+                self.logger.error(epce)
                 return None
 
             self.cached_aput_key = None
@@ -72,7 +59,7 @@ class EnviroClient():
 
             if not self.cached_api_key:
                 new_key = boto3_client.create_api_key(apiId=self.appsync_api_id)
-                print(new_key)
+                self.logger.debug(new_key)
                 self.cached_api_key = new_key['id']
                 self.api_expires = new_key['expires']
                 return(new_key['id'])
@@ -92,9 +79,9 @@ class EnviroClient():
         try:
             response = requests.request("POST", self.appsync_api_endpoint, data=payload, headers=headers)
         except NewConnectionError as nce:
-            logging.error(nce)
+            self.logger.error(nce)
         except ConnectionError as ce:
-            logging.error(ce)
+            self.logger.error(ce)
 
         return response
 
@@ -107,8 +94,8 @@ class EnviroClient():
                 monitorID: \"{self.serial_number}\"''' + '''}){collection_time, temperature}}'''
         resp = self.execute_gql(query)
         if resp:
-            logging.info(resp.status_code)
-            logging.info(resp.content)
+            self.logger.info(resp.status_code)
+            self.logger.info(resp.content)
 
     def get_comp_factor(self, avg_cpu_temp, raw_temp):
         # 
@@ -118,15 +105,15 @@ class EnviroClient():
                 return self.comp_factor
             calc_comp_factor = (avg_cpu_temp - raw_temp) / (raw_temp - self.target_temp)
             new_comp_temp = raw_temp - ((avg_cpu_temp - raw_temp) / calc_comp_factor)
-            print(f'{calc_comp_factor} raw {raw_temp} avg_cpu {avg_cpu_temp} new_comp {new_comp_temp}')
+            self.logger.debug(f'{calc_comp_factor} raw {raw_temp} avg_cpu {avg_cpu_temp} new_comp {new_comp_temp}')
             self.comp_factor = float("{:.2f}".format(calc_comp_factor))
             self.calibrate = False
             # Make sure calibration only happens once and new settings are
             # saved for next restart
             config = {}
-            with open(CONFIG_FILE, 'r') as config_file:
+            with open(self.config_file, 'r') as config_file:
                 config = json.load(config_file)
-            with open(CONFIG_FILE, 'w') as config_file:
+            with open(self.config_file, 'w') as config_file:
                 config['calibrate'] = False
                 config['comp_factor'] = calc_comp_factor
                 json.dump(config, config_file, indent=4)

@@ -3,5 +3,7 @@
     "appsync_api_endpoint": "",
     "calibrate": true,
     "target_temp": 6.2,
-    "comp_factor": 1.23
+    "comp_factor": 1.23,
+    "logfile": "/var/log/enviro/readings.tsv",
+    "log_interval": "W6"
 }
