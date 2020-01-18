@@ -20,3 +20,17 @@ run ```systemctl daemon-reload``` followed by ```systemctl start enviro```
 As well as logging results to the DynamoDb at intervals, a finer grained set of
 readings will be captured in the file readings.tsv (in / if you are using
 systemd)
+
+```
+virtualenv enviro-env -p python3 
+source enviro-env/bin/activate
+pip3 install -r requirements.txt 
+cp -pr ~/enviroplus-python/examples/fonts/ .
+cp enviro_config.json.template enviro_config.json
+vi enviro_config.json
+
+sudo cp enviro.service /etc/systemd/system/enviro.service
+sudo systemctl daemon-reload
+sudo systemctl start enviro.service
+sudo tail -f /var/log/syslog
+```
