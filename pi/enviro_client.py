@@ -1,9 +1,12 @@
 import json
-import os 
+import os
 import logging
 from time import time
 
 import boto3
+from botocore.exceptions import EndpointConnectionError
+from urllib3.exceptions import NewConnectionError
+from requests.exceptions import ConnectionError
 
 import requests
 
@@ -54,7 +57,12 @@ class EnviroClient():
         if not self.api_expires or self.api_expires < time():
             boto3_client = boto3.client('appsync')
 
-            response = boto3_client.list_api_keys(apiId=self.appsync_api_id)
+            try:
+                response = boto3_client.list_api_keys(apiId=self.appsync_api_id)
+            except EndpointConnectionError as epce:
+                logging.error(epce)
+                return None
+
             self.cached_aput_key = None
             for api_key in response['apiKeys']:
                 if api_key['expires'] > time():
@@ -83,16 +91,16 @@ class EnviroClient():
         response = None
         try:
             response = requests.request("POST", self.appsync_api_endpoint, data=payload, headers=headers)
-        except urllib3.exceptions.NewConnectionError as nce:
+        except NewConnectionError as nce:
             logging.error(nce)
-        except requests.exceptions.ConnectionError as ce:
+        except ConnectionError as ce:
             logging.error(ce)
 
         return response
 
     def upload_values(self, data):
 
-        query= '''mutation createReading { createReading(input: { ''' + f'''collection_time: \"{data["collection_time"].isoformat()}Z\",
+        query = '''mutation createReading { createReading(input: { ''' + f'''collection_time: \"{data["collection_time"].isoformat()}Z\",
         temperature: {data["temperature"]}, raw_temperature: {data["raw_temperature"]}, comp_factor: {data["comp_factor"]}, pressure: {data["pressure"]}, humidity: {data["humidity"]},
                 light: {data["light"]}, oxidised: {data["oxidised"]}, reduced: {data["reduced"]}, nh3: {data["nh3"]},
                 pm1: {data["pm1"]}, pm25: {data["pm25"]}, pm10: {data["pm10"]},
@@ -122,7 +130,6 @@ class EnviroClient():
                 config['calibrate'] = False
                 config['comp_factor'] = calc_comp_factor
                 json.dump(config, config_file, indent=4)
-            
 
         return self.comp_factor
 
