@@ -22,7 +22,8 @@ readings will be captured in the file readings.tsv (in / if you are using
 systemd)
 
 ```
-virtualenv enviro-env -p python3 
+sudo apt install -y python3-virtualenv libatlas-base-dev python3-numpy libjpeg-dev zlib1g-dev
+python3 -m venv enviro-env
 source enviro-env/bin/activate
 pip3 install -r requirements.txt 
 cp -pr ~/enviroplus-python/examples/fonts/ .
