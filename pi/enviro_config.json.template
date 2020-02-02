@@ -5,5 +5,7 @@
     "target_temp": 6.2,
     "comp_factor": 1.23,
     "logfile": "/var/log/enviro/readings.tsv",
-    "log_interval": "W6"
+    "log_interval": "W6",
+    "log_to_aws": true,
+    "output_to_screen": true
 }

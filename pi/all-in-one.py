@@ -110,9 +110,11 @@ serial_number = get_serial_number()
 
 with open(os.path.join(dir_path,CONFIG_FILE)) as config_file:
     config = json.load(config_file)
-    e_client = EnviroClient(serial_number, CONFIG_FILE, config)
+    if config["log_to_aws"]:
+        e_client = EnviroClient(serial_number, CONFIG_FILE, config)
     e_logging = EnviroLogging(serial_number, config)
-    e_display = EnviroDisplay(config, variables)
+    if config["output_to_screen"]:
+        e_display = EnviroDisplay(config, variables)
 
 count = 0
 # 100 approx every 5 mins
@@ -209,18 +211,22 @@ try:
 
         count += 1
 
+        e_client = EnviroClient(serial_number, CONFIG_FILE, config)
         # print(data)
-        e_display.display_text(variables[disp_mode], data[variables[disp_mode]], units[disp_mode])
+        if config["output_to_screen"]:
+            e_display.display_text(variables[disp_mode], data[variables[disp_mode]], units[disp_mode])
         e_logging.output_to_file(variables, data)
 
-        if count % interval == 0:
-            out_data = {}
-            out_data[variables[0]] = data[variables[0]]
-            for mode in range(1, len(variables)):
-                out_data[variables[mode]] = cumulative_variables[variables[mode]] / interval
-                cumulative_variables[variables[mode]] = 0.0
-            count = 0
-            e_client.upload_values(out_data)
+        if config["log_to_aws"]:
+            # 
+            if count % interval == 0:
+                out_data = {}
+                out_data[variables[0]] = data[variables[0]]
+                for mode in range(1, len(variables)):
+                    out_data[variables[mode]] = cumulative_variables[variables[mode]] / interval
+                    cumulative_variables[variables[mode]] = 0.0
+                count = 0
+                e_client.upload_values(out_data)
 
 
 # Exit cleanly
