@@ -18,6 +18,7 @@ from subprocess import PIPE, Popen
 
 import logging
 
+from enviro_config import EnviroConfig
 from enviro_client import EnviroClient
 from enviro_logging import EnviroLogging
 from enviro_display import EnviroDisplay
@@ -108,13 +109,13 @@ CONFIG_FILE = 'enviro_config.json'
 dir_path = os.path.dirname(os.path.realpath(__file__))
 serial_number = get_serial_number()
 
-with open(os.path.join(dir_path,CONFIG_FILE)) as config_file:
-    config = json.load(config_file)
-    if config["log_to_aws"]:
-        e_client = EnviroClient(serial_number, CONFIG_FILE, config)
-    e_logging = EnviroLogging(serial_number, config)
-    if config["output_to_screen"]:
-        e_display = EnviroDisplay(config, variables)
+e_config = EnviroConfig(serial_number, CONFIG_FILE)
+config = e_config.get_config()
+if config["log_to_aws"]:
+    e_client = EnviroClient(serial_number, config)
+e_logging = EnviroLogging(serial_number, config)
+if config["output_to_screen"]:
+    e_display = EnviroDisplay(config, variables)
 
 count = 0
 # 100 approx every 5 mins
@@ -163,7 +164,7 @@ try:
                 avg_cpu_temp = sum(cpu_temps) / float(len(cpu_temps))
                 raw_temp = bme280.get_temperature()
             # Compensation factor for temperature
-                comp_factor = e_client.get_comp_factor(avg_cpu_temp, raw_temp)
+                comp_factor = e_config.get_comp_factor(avg_cpu_temp, raw_temp)
                 # print(f'raw {raw_temp} cpu {cpu_temp}')
             # raw 23.36554477615539 cpu 33.6
                 comp_temp = raw_temp - ((avg_cpu_temp - raw_temp) / comp_factor)
@@ -211,7 +212,6 @@ try:
 
         count += 1
 
-        e_client = EnviroClient(serial_number, CONFIG_FILE, config)
         # print(data)
         if config["output_to_screen"]:
             e_display.display_text(variables[disp_mode], data[variables[disp_mode]], units[disp_mode])
