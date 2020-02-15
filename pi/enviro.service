@@ -6,6 +6,7 @@ After=network.target
 ExecStart=/home/pi/enviroplus-aws/pi/all-in-one.py
 Type=simple
 Restart=on-failure
+RestartSec=10
 
 [Install]
 WantedBy=default.target
