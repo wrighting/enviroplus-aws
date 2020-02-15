@@ -23,7 +23,7 @@ class EnviroClient():
             else:
                 self.api_key = None
                 self.appsync_api_id = config['appsync_api_id']
-                self.appsync_api_endpoint = config['appsync_api_endpoint']
+            self.appsync_api_endpoint = config['appsync_api_endpoint']
             self.api_expires = 0
             self.cached_api_key = None
 
