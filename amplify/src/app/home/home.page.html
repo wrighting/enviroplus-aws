@@ -38,7 +38,7 @@
         </ion-select>
       </ion-item>
     </ion-list>
-    
+
     <ion-item>
       <ion-label>Number of readings</ion-label>
       <ion-range min="1" [max]="maxLimit" pin="true" color="secondary" [(ngModel)]="limit" (ngModelChange)="refresh()">
@@ -47,11 +47,17 @@
 
     <div class="row">
       <div class="col-md-6">
-        <div class="chart-wrapper">
-          <canvas baseChart [datasets]="lineChartData" [labels]="lineChartLabels" [options]="lineChartOptions"
-            [colors]="lineChartColors" [legend]="lineChartLegend" [chartType]="lineChartType"
-            (chartHover)="chartHovered($event)" (chartClick)="chartClicked($event)"></canvas>
+        <div *ngFor="let monitor of ident">
+          {{ monitor.ident }}
+          <div *ngIf="results[monitor.id]">
+            <div class="chart-wrapper">
+              <canvas baseChart [datasets]="results[monitor.id]['chartData']"
+                [labels]="results[monitor.id]['chartLabels']" [options]="lineChartOptions"
+                [colors]="lineChartColors" [legend]="lineChartLegend" [chartType]="lineChartType"
+                (chartHover)="chartHovered($event)" (chartClick)="chartClicked($event)"></canvas>
 
+            </div>
+          </div>
         </div>
       </div>
     </div>
