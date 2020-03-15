@@ -14,6 +14,7 @@ except ImportError:
 from bme280 import BME280
 from pms5003 import PMS5003, ReadTimeoutError as pmsReadTimeoutError
 from enviroplus import gas
+from enviroplus.noise import Noise
 from subprocess import PIPE, Popen
 
 import logging
@@ -75,33 +76,43 @@ light = 1
 
 # Create a values dict to store the data
 variables = [
-    "collection_time",
-    "temperature",
-             "pressure",
-             "humidity",
-             "light",
-             "oxidised",
-             "reduced",
-             "nh3",
-             "pm1",
-             "pm25",
-             "pm10",
-    "raw_temperature",
-    "comp_factor"
+     "collection_time",
+     "temperature",
+     "pressure",
+     "humidity",
+     "light",
+     "oxidised",
+     "reduced",
+     "nh3",
+     "pm1",
+     "pm25",
+     "pm10",
+     "raw_temperature",
+     "comp_factor",
+     "low_freq",
+     "mid_freq",
+     "high_freq",
+     "freq_amp"
 ]
 
 units = [
     "",
-                "C",
-                "hPa",
-                "%",
-                "Lux",
-                "kO",
-                "kO",
-                "kO",
-                "ug/m3",
-                "ug/m3",
-                "ug/m3"
+    "C",
+    "hPa",
+    "%",
+    "Lux",
+    "kO",
+    "kO",
+    "kO",
+    "ug/m3",
+    "ug/m3",
+    "ug/m3",
+    "",
+    "",
+    "",
+    "",
+    "",
+    ""
 ]
 
 CONFIG_FILE = 'enviro_config.json'
@@ -123,6 +134,8 @@ interval = 100
 cumulative_variables = {}
 for mode in range(1,len(variables)):
     cumulative_variables[variables[mode]] = 0.0
+
+noise = Noise()
 
 # The main loop
 try:
@@ -146,6 +159,8 @@ try:
             pm_data = pms5003.read()
 
         gas_data = gas.read_all()
+
+        low, mid, high, amp = noise.get_noise_profile()
 
         data = {}
         for mode_idx in range(len(variables)):
@@ -206,6 +221,18 @@ try:
             if mode == "pm10":
                 # variable = "pm10"
                 data[mode] = float(pm_data.pm_ug_per_m3(10))
+
+            if mode == "low_freq":
+                data[mode] = int(low)
+
+            if mode == "mid_freq":
+                data[mode] = int(mid)
+
+            if mode == "high_freq":
+                data[mode] = int(high)
+
+            if mode == "freq_amp":
+                data[mode] = int(amp)
 
             if mode_idx > 0:
                 cumulative_variables[mode] += data[mode]
