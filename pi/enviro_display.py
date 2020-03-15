@@ -1,11 +1,12 @@
 import logging
-import os
 import colorsys
 import ST7735
 
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
+
+from fonts.ttf import RobotoMedium as UserFont
 
 class EnviroDisplay():
 
@@ -32,8 +33,8 @@ class EnviroDisplay():
         # Set up canvas and font
         self.img = Image.new('RGB', (self.WIDTH, self.HEIGHT), color=(0, 0, 0))
         self.draw = ImageDraw.Draw(self.img)
-        path = os.path.dirname(os.path.realpath(__file__))
-        self.font = ImageFont.truetype(path + "/fonts/Asap/Asap-Bold.ttf", 20)
+        font_size = 20
+        self.font = ImageFont.truetype(UserFont, font_size)
 
         self.display = st7735
 

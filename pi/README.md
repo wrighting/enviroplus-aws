@@ -2,8 +2,6 @@
 Install the library from https://github.com/pimoroni/enviroplus-python as per
 the instructions.
 
-You'll need to copy the fonts directory from that repo.
-
 The paths in all-in-one.py and enviro.service assume that this has been cloned
 under /home/pi
 
@@ -26,7 +24,6 @@ sudo apt install -y python3-virtualenv libatlas-base-dev python3-numpy libjpeg-d
 python3 -m venv enviro-env
 source enviro-env/bin/activate
 pip3 install -r requirements.txt 
-cp -pr ~/enviroplus-python/examples/fonts/ .
 cp enviro_config.json.template enviro_config.json
 vi enviro_config.json
 
