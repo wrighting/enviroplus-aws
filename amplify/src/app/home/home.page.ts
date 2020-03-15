@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import API, { graphqlOperation } from '@aws-amplify/api';
-import { APIService, GetMonitorQuery } from '../API.service';
+import { APIService, GetMonitorQuery, ListMonitorsQuery } from '../API.service';
 import { ChartDataSets } from 'chart.js';
 import { Color, Label } from 'ng2-charts';
 
@@ -62,19 +62,17 @@ export class HomePage {
   ];
 
   public readingType = "temperature";
-  public ident = '';
+  public ident = [];
 
-  public lineChartData: Array<ChartDataSets> = [
-    { data: [], label: this.readingType },
-  ];
-  public lineChartLabels: Array<Label> = [];
+  public results = {};
+
   public lineChartOptions: any = {
     responsive: true
   };
   public lineChartColors: Array<Color> = [
     { // grey
       backgroundColor: 'rgba(148,159,177,0.2)',
-      borderColor: 'rgba(148,159,177,1)',
+      borderColor: 'blue',
       pointBackgroundColor: 'rgba(148,159,177,1)',
       pointBorderColor: '#fff',
       pointHoverBackgroundColor: '#fff',
@@ -82,7 +80,7 @@ export class HomePage {
     },
     { // dark grey
       backgroundColor: 'rgba(77,83,96,0.2)',
-      borderColor: 'rgba(77,83,96,1)',
+      borderColor: 'green',
       pointBackgroundColor: 'rgba(77,83,96,1)',
       pointBorderColor: '#fff',
       pointHoverBackgroundColor: '#fff',
@@ -90,7 +88,7 @@ export class HomePage {
     },
     { // grey
       backgroundColor: 'rgba(148,159,177,0.2)',
-      borderColor: 'rgba(148,159,177,1)',
+      borderColor: 'red',
       pointBackgroundColor: 'rgba(148,159,177,1)',
       pointBorderColor: '#fff',
       pointHoverBackgroundColor: '#fff',
@@ -106,11 +104,11 @@ export class HomePage {
   }
   ngOnInit() {
     let now = new Date();
-    now.setMinutes( now.getMinutes() - 20 );
+    now.setMinutes(now.getMinutes() - 20);
     this.startTime = now.toISOString()
-    this.refresh();
-
+    this.getMonitors();
   }
+
 
 
 
@@ -122,9 +120,37 @@ export class HomePage {
   public chartHovered(e: any): void {
 
   }
+
+  async ListMonitors(): Promise<ListMonitorsQuery> {
+    const statement = `query listMonitors {
+      listMonitors {
+        items {
+          id
+          ident
+        }
+      }
+    }`;
+    const gqlAPIServiceArguments: any = {};
+
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <ListMonitorsQuery>response.data.listMonitors;
+  }
+
+  public getMonitors() {
+    const response = this.ListMonitors();
+
+    response.then(res => {
+      this.ident = res.items;
+      this.refresh();
+    });
+
+  }
   async GetMonitorReadings(id: string, start_time, limit?: number): Promise<GetMonitorQuery> {
     const statement = `query GetMonitor($id: ID!, $limit: Int, $start_time: String) {
         getMonitor(id: $id) {
+          id
           readingsByDate (limit: $limit, collection_time: { gt: $start_time } ) {
             items {
               collection_time
@@ -147,7 +173,7 @@ export class HomePage {
         }
       }`;
     const gqlAPIServiceArguments: any = {};
-   
+
     gqlAPIServiceArguments.id = id;
 
     gqlAPIServiceArguments.start_time = start_time;
@@ -207,35 +233,45 @@ export class HomePage {
         }
       ];
     }
-    
+
     this.dataTypes = keys;
   }
   refresh(): void {
 
     this.setDataTypes();
 
-    const response = this.GetMonitorReadings(this.ident, this.startTime, this.limit);
+    this.ident.forEach((ident) => {
+      const response = this.GetMonitorReadings(ident['id'], this.startTime, this.limit);
 
-    response.then(res => {
-      const items = res.readingsByDate.items;
-      if (items.length > 0) {
+      response.then(res => {
+        const items = res.readingsByDate.items;
+        if (items.length > 0) {
 
-        this.lineChartData = [];
-        this.dataTypes.forEach(line => {
-          this.lineChartData.push({ data: [], label: line.label });
-        });
-        this.lineChartLabels = [];
+          let lineChartData: Array<ChartDataSets> = [
+            { data: [], label: this.readingType },
+          ];
+          let lineChartLabels: Array<Label> = [];
 
-        items.forEach(element => {
-          let i = 0;
+          lineChartData = [];
           this.dataTypes.forEach(line => {
-            if (i == 0) {
-              this.lineChartLabels.push(element.collection_time);
-            }
-            this.lineChartData[i++].data.push(element[line.key]);
+            lineChartData.push({ data: [], label: line.label });
           });
-        });
-      }
+          lineChartLabels = [];
+
+          items.forEach(element => {
+            let i = 0;
+            this.dataTypes.forEach(line => {
+              if (i == 0) {
+                lineChartLabels.push(element.collection_time);
+              }
+              lineChartData[i++].data.push(element[line.key]);
+            });
+          });
+          this.results[res.id] = {};
+          this.results[res.id]['chartData'] = lineChartData;
+          this.results[res.id]['chartLabels'] = lineChartLabels;
+        }
+      });
     });
   }
 }
