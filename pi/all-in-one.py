@@ -152,11 +152,15 @@ try:
             last_page = time.time()
 
         # logging.info(f'Mode: {disp_mode}')
+        pm_data = None
         try:
             pm_data = pms5003.read()
         except pmsReadTimeoutError:
-            pms5003.reset()
-            pm_data = pms5003.read()
+            try:
+                pms5003.reset()
+                pm_data = pms5003.read()
+            except:
+                logging.warning("Can't read pm")
 
         gas_data = gas.read_all()
 
@@ -210,15 +214,15 @@ try:
             if mode == "nh3":
                 data[mode] = gas_data.nh3 / 1000
 
-            if mode == "pm1":
+            if mode == "pm1" and pm_data:
                 # variable = "pm1"
                 data[mode] = float(pm_data.pm_ug_per_m3(1.0))
 
-            if mode == "pm25":
+            if mode == "pm25" and pm_data:
                 # variable = "pm25"
                 data[mode] = float(pm_data.pm_ug_per_m3(2.5))
 
-            if mode == "pm10":
+            if mode == "pm10" and pm_data:
                 # variable = "pm10"
                 data[mode] = float(pm_data.pm_ug_per_m3(10))
 
@@ -235,7 +239,8 @@ try:
                 data[mode] = int(amp)
 
             if mode_idx > 0:
-                cumulative_variables[mode] += data[mode]
+                if mode in data:
+                    cumulative_variables[mode] += data[mode]
 
         count += 1
 

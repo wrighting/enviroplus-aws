@@ -63,5 +63,9 @@ class EnviroLogging():
             if val == "collection_time":
                 output += f"{data[val].strftime('%Y-%m-%d %H:%M:%S')}"
             else:
-                output += f"\t{data[val]}"
+                if val in data:
+                    output += f"\t{data[val]}"
+                else:
+                    output += "\t-1"
+
         self.logger.info(output)
