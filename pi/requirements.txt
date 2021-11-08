@@ -1,4 +1,4 @@
-ads1015==0.0.5
+ads1015==0.0.7
 astral==2.1
 boto3==1.10.17
 botocore==1.13.17
@@ -6,7 +6,7 @@ certifi==2019.9.11
 cffi==1.14.0
 chardet==3.0.4
 docutils==0.15.2
-enviroplus==0.0.3
+enviroplus==0.0.5
 font-roboto==0.0.1
 fonts==0.0.3
 i2cdevice==0.0.6
@@ -14,9 +14,10 @@ idna==2.8
 jmespath==0.9.4
 ltr559==0.1.0
 numpy==1.17.4
+paho-mqtt==1.6.1
 Pillow==6.2.1
 pimoroni-bme280==0.0.2
-pkg-resources==0.0.0
+pkg_resources==0.0.0
 pms5003==0.0.4
 pycparser==2.20
 pyserial==3.4
