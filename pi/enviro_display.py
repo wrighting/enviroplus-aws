@@ -56,7 +56,7 @@ class EnviroDisplay():
                    - min(self.values[variable]) + 1) for v in self.values[variable]]
         # Format the variable name and value
         message = "{}: {:.1f} {}".format(variable[:4], data, unit)
-        self.logger.info(message)
+        # self.logger.info(message)
         self.draw.rectangle((0, 0, self.WIDTH, self.HEIGHT), (255, 255, 255))
         for i in range(len(colours)):
             # Convert the values to colours from red to blue
