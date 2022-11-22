@@ -15,7 +15,7 @@ jmespath==0.9.4
 ltr559==0.1.0
 numpy==1.17.4
 paho-mqtt==1.6.1
-Pillow==6.2.1
+Pillow==9.3.0
 pimoroni-bme280==0.0.2
 pkg_resources==0.0.0
 pms5003==0.0.4
